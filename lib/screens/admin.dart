@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ecommerceappadmin/db/category.dart';
+import 'package:ecommerceappadmin/db/brand.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 enum Page {
   dashboard,
@@ -18,6 +21,8 @@ class _AdminState extends State<Admin> {
   TextEditingController brandController = TextEditingController();
   GlobalKey<FormState> _categoryFormKey = GlobalKey();
   GlobalKey<FormState> _brandFormKey = GlobalKey();
+  BrandService _brandService = BrandService();
+  CategoryService _categoryService = CategoryService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -315,7 +320,11 @@ class _AdminState extends State<Admin> {
       actions: [
         FlatButton(
             onPressed: (){
-              Navigator.pop(context);
+              if(categoryController.text != null){
+                _categoryService.createCategory(categoryController.text);
+                Fluttertoast.showToast(msg: 'Category created');
+                Navigator.pop(context);
+              }
             },
             child: Text('ADD')
         ),
@@ -353,7 +362,11 @@ class _AdminState extends State<Admin> {
       actions: [
         FlatButton(
           onPressed: (){
-            Navigator.pop(context);
+            if(brandController.text != null){
+              _brandService.createBrand(brandController.text);
+              Fluttertoast.showToast(msg: 'Brand created');
+              Navigator.pop(context);
+            }
           },
           child: Text('ADD'),
         ),
