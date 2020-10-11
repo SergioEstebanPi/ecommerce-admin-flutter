@@ -4,15 +4,23 @@ import 'package:uuid/uuid.dart';
 
 class BrandService {
   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+  String ref = 'brands';
   void createBrand(String name){
     var id = Uuid();
     String brandId = id.v1();
     _firebaseFirestore
-        .collection('brands')
+        .collection(ref)
         .doc()
         .set({
       'brandId': brandId,
       'brandName': name
     });
+  }
+  Future getBrands(){
+    return _firebaseFirestore
+        .collection(ref)
+        .get().then((snap) => {
+          snap.docs
+        });
   }
 }

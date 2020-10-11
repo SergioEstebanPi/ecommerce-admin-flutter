@@ -1,3 +1,4 @@
+import 'package:ecommerceappadmin/screens/add_product.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerceappadmin/db/category.dart';
 import 'package:ecommerceappadmin/db/brand.dart';
@@ -254,7 +255,14 @@ class _AdminState extends State<Admin> {
             ListTile(
               leading: Icon(Icons.add),
               title: Text('Add product'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => AddProduct()
+                    )
+                );
+              },
             ),
             Divider(),
             ListTile(
