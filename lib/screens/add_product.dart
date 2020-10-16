@@ -5,6 +5,7 @@ import 'package:ecommerceappadmin/db/brand.dart';
 import 'package:ecommerceappadmin/db/category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProduct extends StatefulWidget {
@@ -17,6 +18,7 @@ class _AddProductState extends State<AddProduct> {
   BrandService _brandService = BrandService();
   GlobalKey<FormState> _formKey = GlobalKey();
   TextEditingController _productNameController = TextEditingController();
+  TextEditingController _productQuantityController = TextEditingController();
   List<QueryDocumentSnapshot> brands = <QueryDocumentSnapshot>[];
   List<QueryDocumentSnapshot> categories = <QueryDocumentSnapshot>[];
   List<DropdownMenuItem<String>> brandsDropDown = <DropdownMenuItem<String>>[];
@@ -237,7 +239,7 @@ class _AddProductState extends State<AddProduct> {
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: TextFormField(
-                  controller: _productNameController,
+                  controller: _productQuantityController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: 'Quantity',
@@ -358,7 +360,7 @@ class _AddProductState extends State<AddProduct> {
                   color: red,
                   textColor: white,
                   onPressed: (){
-
+                    validateAndUpload();
                   },
                   child: Text('Add product')
               ),
@@ -485,6 +487,27 @@ class _AddProductState extends State<AddProduct> {
         fit: BoxFit.fill,
         width: double.infinity,
       );
+    }
+  }
+
+  void validateAndUpload() {
+    if(_formKey.currentState.validate()){
+      if(_image1 != null
+          && _image2 != null
+          && _image3 != null){
+        if(selectedSizes.isNotEmpty){
+          String imageUrl;
+          final String picture = "${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+        } else {
+          Fluttertoast.showToast(
+              msg: 'select at least one size'
+          );
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: 'all the images must be provided'
+        );
+      }
     }
   }
 }
