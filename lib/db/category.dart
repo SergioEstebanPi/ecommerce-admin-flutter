@@ -12,10 +12,9 @@ class CategoryService {
     String categoryId = id.v1();
     _firebaseFirestore
         .collection(ref)
-        .doc()
+        .doc(categoryId)
         .set({
-          'categoryId': categoryId,
-          'categoryName': name
+          'category': name
         });
   }
   Future<List<QueryDocumentSnapshot>> getCategories(){
@@ -24,5 +23,13 @@ class CategoryService {
         .get()
         .then((value) => value.docs);
     return categories;
+  }
+  Future getSuggestion(String suggestion){
+    return _firebaseFirestore
+        .collection(ref)
+        .where('category',
+          isEqualTo: suggestion)
+        .get()
+        .then((value) => value.docs);
   }
 }

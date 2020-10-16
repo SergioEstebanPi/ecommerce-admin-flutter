@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerceappadmin/db/brand.dart';
 import 'package:ecommerceappadmin/db/category.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -177,20 +178,31 @@ class _AddProductState extends State<AddProduct> {
                 },
               ),
             ),
-            /*
-            Expanded(
-                child: ListView.builder(
-                    itemCount: categories.length,
-                    itemBuilder: (context, index){
-                      return ListTile(
-                        title: Text(
-                          categories[index]['categoryName']
-                        ),
-                      );
-                    }
-                )
+            TypeAheadField(
+              textFieldConfiguration: TextFieldConfiguration(
+                  autofocus: false,
+                  style: DefaultTextStyle.of(context).style.copyWith(
+                      fontStyle: FontStyle.italic
+                  ),
+                  decoration: InputDecoration()
+              ),
+              suggestionsCallback: (pattern) async {
+                return await _categoryService.getSuggestion(pattern);
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                  leading: Icon(Icons.category_outlined),
+                  title: Text(suggestion['category'])
+                );
+              },
+              onSuggestionSelected: (suggestion) {
+                /*
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ProductPage(product: suggestion)
+                ));
+                 */
+              },
             ),
-            */
             Center(
               child: DropdownButton(
                 value: _currentCategory,
