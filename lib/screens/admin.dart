@@ -303,6 +303,7 @@ class _AdminState extends State<Admin> {
         );
         break;
       default:
+        return null;
         break;
     }
   }

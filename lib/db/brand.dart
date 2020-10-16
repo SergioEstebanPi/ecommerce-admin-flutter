@@ -10,7 +10,7 @@ class BrandService {
     String brandId = id.v1();
     _firebaseFirestore
         .collection(ref)
-        .doc()
+        .doc(brandId)
         .set({
           'brand': name,
         });

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerceappadmin/db/brand.dart';
 import 'package:ecommerceappadmin/db/category.dart';
+import 'package:ecommerceappadmin/db/product.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,9 +18,11 @@ class AddProduct extends StatefulWidget {
 class _AddProductState extends State<AddProduct> {
   CategoryService _categoryService = CategoryService();
   BrandService _brandService = BrandService();
+  ProductService _productService = ProductService();
   GlobalKey<FormState> _formKey = GlobalKey();
   TextEditingController _productNameController = TextEditingController();
   TextEditingController _productQuantityController = TextEditingController();
+  TextEditingController _productPriceController = TextEditingController();
   List<QueryDocumentSnapshot> brands = <QueryDocumentSnapshot>[];
   List<QueryDocumentSnapshot> categories = <QueryDocumentSnapshot>[];
   List<DropdownMenuItem<String>> brandsDropDown = <DropdownMenuItem<String>>[];
@@ -33,6 +37,7 @@ class _AddProductState extends State<AddProduct> {
   File _image1;
   File _image2;
   File _image3;
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -105,7 +110,9 @@ class _AddProductState extends State<AddProduct> {
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          child: Column(
+          child: isLoading ?
+          CircularProgressIndicator() :
+          Column(
             children: [
               Row(
                 children: [
@@ -235,6 +242,25 @@ class _AddProductState extends State<AddProduct> {
                       value: _currentBrand,
                     ),
                   ]
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: TextFormField(
+                  //initialValue: '0.00',
+                  controller: _productPriceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Price',
+                    hintText: 'Price',
+                  ),
+                  validator: (value){
+                    if(value.isEmpty){
+                      return 'You must enter the price';
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(12),
@@ -490,20 +516,70 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  void validateAndUpload() {
+  void validateAndUpload() async {
     if(_formKey.currentState.validate()){
+      setState(() {
+        isLoading = true;
+      });
       if(_image1 != null
           && _image2 != null
           && _image3 != null){
         if(selectedSizes.isNotEmpty){
-          String imageUrl;
-          final String picture = "${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+          String imageUrl1;
+          String imageUrl2;
+          String imageUrl3;
+          final FirebaseStorage storage = FirebaseStorage.instance;
+          final String picture1 = "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+          StorageUploadTask task1 = storage
+              .ref()
+              .child(picture1)
+              .putFile(_image1);
+          final String picture2 = "2${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+          StorageUploadTask task2 = storage
+              .ref()
+              .child(picture2)
+              .putFile(_image2);
+          final String picture3 = "3${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
+          StorageUploadTask task3 = storage
+              .ref()
+              .child(picture3)
+              .putFile(_image3);
+          StorageTaskSnapshot snapshot1 = await task1.onComplete.then((value) => value);
+          StorageTaskSnapshot snapshot2 = await task2.onComplete.then((value) => value);
+          task3.onComplete.then((snapshot3) async {
+            imageUrl1 = await snapshot1.ref.getDownloadURL();
+            imageUrl2 = await snapshot2.ref.getDownloadURL();
+            imageUrl3 = await snapshot3.ref.getDownloadURL();
+            List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
+            _productService.uploadProduct(
+                productName: _productNameController.text,
+                brand: _productNameController.text,
+                category: _productNameController.text,
+                images: imageList,
+                price: double.parse(_productPriceController.text),
+                quantity: int.parse(_productQuantityController.text),
+                sizes: selectedSizes,
+            );
+            _formKey.currentState.reset();
+            setState(() {
+              isLoading = false;
+            });
+            Fluttertoast.showToast(
+                msg: 'Product added'
+            );
+          });
         } else {
+          setState(() {
+            isLoading = false;
+          });
           Fluttertoast.showToast(
               msg: 'select at least one size'
           );
         }
       } else {
+        setState(() {
+          isLoading = false;
+        });
         Fluttertoast.showToast(
             msg: 'all the images must be provided'
         );
