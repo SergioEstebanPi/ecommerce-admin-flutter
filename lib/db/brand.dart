@@ -12,15 +12,22 @@ class BrandService {
         .collection(ref)
         .doc()
         .set({
-      'brandId': brandId,
-      'brandName': name
-    });
+          'brand': name,
+        });
   }
-  Future getBrands(){
+  Future<List<QueryDocumentSnapshot>> getBrands(){
+    Future<List<QueryDocumentSnapshot>> brands = _firebaseFirestore
+        .collection(ref)
+        .get()
+        .then((value) => value.docs);
+    return brands;
+  }
+  Future getSuggestion(String suggestion){
     return _firebaseFirestore
         .collection(ref)
-        .get().then((snap) => {
-          snap.docs
-        });
+        .where('brand',
+        isEqualTo: suggestion)
+        .get()
+        .then((value) => value.docs);
   }
 }

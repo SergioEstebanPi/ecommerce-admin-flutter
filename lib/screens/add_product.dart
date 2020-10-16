@@ -29,12 +29,6 @@ class _AddProductState extends State<AddProduct> {
   void initState() {
     super.initState();
     _getCategories();
-    /*
-    _currentCategory = categoriesDropDown[0] != null
-        ? categoriesDropDown[0].value
-        : 'Sin registros';
-
-     */
   }
   List<DropdownMenuItem<String>> getCategoriesDropDown(){
     List<DropdownMenuItem<String>> items = List();
@@ -42,14 +36,14 @@ class _AddProductState extends State<AddProduct> {
     print(categories.length);
     for(int i = 0; i < categories.length; i++){
       setState(() {
-        _currentCategory = categories[0]['categoryId'];
+        _currentCategory = categories[0]['category'];
         items.insert(
             0,
             DropdownMenuItem(
               child: Text(
-                  categories[i]['categoryName']
+                  categories[i]['category']
               ),
-              value: categories[i]['categoryId'],
+              value: categories[i]['category'],
             )
         );
       });
@@ -96,7 +90,7 @@ class _AddProductState extends State<AddProduct> {
                         width: 2.5
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(14, 40, 14, 40),
+                        padding: const EdgeInsets.fromLTRB(14, 60, 14, 60),
                         child: Icon(
                           Icons.add,
                           color: grey
@@ -117,7 +111,7 @@ class _AddProductState extends State<AddProduct> {
                           width: 2.5
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(14, 40, 14, 40),
+                        padding: const EdgeInsets.fromLTRB(14, 60, 14, 60),
                         child: Icon(
                             Icons.add,
                             color: grey
@@ -138,7 +132,7 @@ class _AddProductState extends State<AddProduct> {
                           width: 2.5
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(14, 40, 14, 40),
+                        padding: const EdgeInsets.fromLTRB(14, 60, 14, 60),
                         child: Icon(
                             Icons.add,
                             color: grey
@@ -178,13 +172,47 @@ class _AddProductState extends State<AddProduct> {
                 },
               ),
             ),
+            Visibility(
+              visible: _currentCategory != null,
+              child: InkWell(
+                child: Material(
+                  borderRadius: BorderRadius.circular(20),
+                  color: red,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Text(
+                              _currentCategory ?? "null",
+                              style: TextStyle(
+                                color: white
+                              ),
+                            )
+                        ),
+                        IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color: white
+                            ),
+                            onPressed: (){
+                              setState(() {
+                                _currentCategory = '';
+                              });
+                            }
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             TypeAheadField(
               textFieldConfiguration: TextFieldConfiguration(
                   autofocus: false,
-                  style: DefaultTextStyle.of(context).style.copyWith(
-                      fontStyle: FontStyle.italic
-                  ),
-                  decoration: InputDecoration()
+                  decoration: InputDecoration(
+                    hintText: 'add category'
+                  )
               ),
               suggestionsCallback: (pattern) async {
                 return await _categoryService.getSuggestion(pattern);
@@ -196,11 +224,66 @@ class _AddProductState extends State<AddProduct> {
                 );
               },
               onSuggestionSelected: (suggestion) {
-                /*
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ProductPage(product: suggestion)
-                ));
-                 */
+                setState(() {
+                  _currentCategory = suggestion['category'];
+                });
+              },
+            ),
+            Visibility(
+              visible: _currentBrand != null,
+              child: InkWell(
+                child: Material(
+                  borderRadius: BorderRadius.circular(20),
+                  color: red,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Text(
+                              _currentBrand ?? "null",
+                              style: TextStyle(
+                                  color: white
+                              ),
+                            )
+                        ),
+                        IconButton(
+                            icon: Icon(
+                                Icons.close,
+                                color: white
+                            ),
+                            onPressed: (){
+                              setState(() {
+                                _currentBrand = '';
+                              });
+                            }
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            TypeAheadField(
+              textFieldConfiguration: TextFieldConfiguration(
+                  autofocus: false,
+                  decoration: InputDecoration(
+                      hintText: 'add brand'
+                  )
+              ),
+              suggestionsCallback: (pattern) async {
+                return await _brandService.getSuggestion(pattern);
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                    leading: Icon(Icons.branding_watermark),
+                    title: Text(suggestion['brand'])
+                );
+              },
+              onSuggestionSelected: (suggestion) {
+                setState(() {
+                  _currentBrand = suggestion['brand'];
+                });
               },
             ),
             Center(
