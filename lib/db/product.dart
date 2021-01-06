@@ -13,6 +13,7 @@ class ProductService {
     List images,
     double price,
     int quantity,
+    List colors,
   }){
     var id = Uuid();
     String productId = id.v1();
@@ -25,8 +26,10 @@ class ProductService {
           'category': category,
           'sizes': sizes,
           'images': images,
+          'imageUrl': images[0],
           'price': price,
           'quantity': quantity,
+          'colors': colors,
         });
   }
 }

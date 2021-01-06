@@ -2,55 +2,61 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Product {
   // constants
-  static const String BRAND = 'brand';
-  static const String CATEGORY = 'category';
-  static const String COLORS = 'colors';
-  static const String FEATURED = 'featured';
-  static const String ID = 'id';
-  static const String NAME = 'name';
-  static const String PICTURE = 'picture';
-  static const String PRICE = 'price';
-  static const String QUANTITY = 'quantity';
-  static const String SALE = 'sale';
-  static const String SIZE = 'size';
+  static const ID = 'id';
+  static const NAME = 'name';
+  static const DESCRIPTION = 'description';
+  static const CATEGORY = 'category';
+  static const PRICE = 'price';
+  static const BRAND = 'brand';
+  static const COLORS = 'colors';
+  static const QUANTITY = 'quantity';
+  static const SIZES = 'sizes';
+  static const ON_SALE = 'onSale';
+  static const FEATURED = 'featured';
+  static const PICTURE = 'imageUrl';
 
   // private variables
-  String _brand;
-  String _category;
   String _id;
   String _name;
-  String _picture;
-  double _price;
+  String _description;
+  String _category;
+  String _brand;
+  int _price;
   int _quantity;
-  List<String> _colors;
-  List<String> _size;
+  List _colors;
+  List _sizes;
+  bool _onSale;
   bool _featured;
-  bool _sale;
+  String _picture;
 
   // getters
-  String get brand => _brand;
-  String get category => _category;
   String get id => _id;
   String get name => _name;
-  String get picture => _picture;
-  double get price =>_price;
+  String get description => _description;
+  String get category => _category;
+  String get brand => _brand;
+  int get price => _price;
   int get quantity => _quantity;
-  List<String> get colors => _colors;
-  List<String> get size =>_size;
-  bool get feature => _featured;
-  bool get sale => _sale;
+  List get colors => _colors;
+  List get sizes => _sizes;
+  bool get onSale => _onSale;
+  bool get featured => _featured;
+  String get picture => _picture;
 
   Product.fromSnapshot(DocumentSnapshot snapshot){
-    _brand = snapshot.get(FEATURED);
-    _category = snapshot.get(BRAND);
-    _id = snapshot.get(ID);
-    _name = snapshot.get(NAME);
-    _picture = snapshot.get(PICTURE);
-    _price = snapshot.get(PRICE);
-    _quantity = snapshot.get(QUANTITY);
-    _colors = snapshot.get(COLORS);
-    _size = snapshot.get(SIZE);
-    _featured = snapshot.get(FEATURED);
-    _sale = snapshot.get(SALE);
+    print(snapshot);
+    Map data = snapshot.data();
+    _id = data[ID];
+    _name = data[NAME];
+    _description = data[DESCRIPTION];
+    _category = data[CATEGORY];
+    _brand = data[BRAND];
+    _price = data[PRICE];
+    _quantity = data[QUANTITY];
+    _colors = data[COLORS];
+    _sizes = data[SIZES];
+    _onSale = data[ON_SALE];
+    _featured = data[FEATURED];
+    _picture = data[PICTURE];
   }
 }

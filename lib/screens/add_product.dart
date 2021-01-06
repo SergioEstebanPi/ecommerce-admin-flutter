@@ -34,6 +34,7 @@ class _AddProductState extends State<AddProduct> {
   Color grey = Colors.grey;
   Color red = Colors.red;
   List<String> selectedSizes = <String>[];
+  List<String> selectedColors = <String>[];
   File _image1;
   File _image2;
   File _image3;
@@ -553,12 +554,13 @@ class _AddProductState extends State<AddProduct> {
             List<String> imageList = [imageUrl1, imageUrl2, imageUrl3];
             _productService.uploadProduct(
                 productName: _productNameController.text,
-                brand: _productNameController.text,
-                category: _productNameController.text,
+                brand: _currentBrand,
+                category: _currentCategory,
                 images: imageList,
                 price: double.parse(_productPriceController.text),
                 quantity: int.parse(_productQuantityController.text),
                 sizes: selectedSizes,
+                colors: selectedColors,
             );
             _formKey.currentState.reset();
             setState(() {
